@@ -1,49 +1,48 @@
-import { getFinalState } from "./processQueue.js";
+import { useState } from "react";
 
-function increment(n) {
-  return n + 1;
-}
-increment.toString = () => "n => n+1";
+export default function Scoreboard() {
+  const [player, setPlayer] = useState({
+    firstName: "Ranjani",
+    lastName: "Shettar",
+    score: 10,
+  });
 
-export default function App() {
+  function handlePlusClick() {
+    setPlayer({
+      ...player,
+      score: player.score + 1,
+    });
+  }
+
+  function handleChange(e) {
+    setPlayer({
+      ...player,
+      [e.target.name]: e.target.value,
+    });
+  }
+
   return (
     <>
-      <TestCase baseState={0} queue={[1, 1, 1]} expected={1} />
-      <hr />
-      <TestCase
-        baseState={0}
-        queue={[increment, increment, increment]}
-        expected={3}
-      />
-      <hr />
-      <TestCase baseState={0} queue={[5, increment]} expected={6} />
-      <hr />
-      <TestCase baseState={0} queue={[5, increment, 42]} expected={42} />
-    </>
-  );
-}
-
-function TestCase({ baseState, queue, expected }) {
-  const actual = getFinalState(baseState, queue);
-  return (
-    <>
-      <p>
-        Base state: <b>{baseState}</b>
-      </p>
-      <p>
-        Queue: <b>[{queue.join(", ")}]</b>
-      </p>
-      <p>
-        Expected result: <b>{expected}</b>
-      </p>
-      <p
-        style={{
-          color: actual === expected ? "green" : "red",
-        }}
-      >
-        Your result: <b>{actual}</b> (
-        {actual === expected ? "correct" : "wrong"})
-      </p>
+      <label>
+        Score: <b>{player.score}</b>{" "}
+        <button onClick={handlePlusClick}>+1</button>
+      </label>
+      <label>
+        First name:
+        <input
+          name="firstName"
+          value={player.firstName}
+          onChange={handleChange}
+        />
+      </label>
+      <label>
+        Last name:
+        <input
+          name="lastName"
+          value={player.lastName}
+          onChange={handleChange}
+        />
+      </label>
     </>
   );
 }
