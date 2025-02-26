@@ -1,48 +1,47 @@
 import { useState } from "react";
+import Background from "./Background.js";
+import Box from "./Box.js";
 
-export default function Scoreboard() {
-  const [player, setPlayer] = useState({
-    firstName: "Ranjani",
-    lastName: "Shettar",
-    score: 10,
+const initialPosition = {
+  x: 0,
+  y: 0,
+};
+
+export default function Canvas() {
+  const [shape, setShape] = useState({
+    color: "orange",
+    position: initialPosition,
   });
 
-  function handlePlusClick() {
-    setPlayer({
-      ...player,
-      score: player.score + 1,
+  function handleMove(dx, dy) {
+    const { x, y } = shape.position;
+    setShape({
+      ...shape,
+      position: {
+        x: x + dx,
+        y: y + dy,
+      },
     });
   }
 
-  function handleChange(e) {
-    setPlayer({
-      ...player,
-      [e.target.name]: e.target.value,
+  function handleColorChange(e) {
+    setShape({
+      ...shape,
+      color: e.target.value,
     });
   }
 
   return (
     <>
-      <label>
-        Score: <b>{player.score}</b>{" "}
-        <button onClick={handlePlusClick}>+1</button>
-      </label>
-      <label>
-        First name:
-        <input
-          name="firstName"
-          value={player.firstName}
-          onChange={handleChange}
-        />
-      </label>
-      <label>
-        Last name:
-        <input
-          name="lastName"
-          value={player.lastName}
-          onChange={handleChange}
-        />
-      </label>
+      <select value={shape.color} onChange={handleColorChange}>
+        <option value="orange">orange</option>
+        <option value="lightpink">lightpink</option>
+        <option value="aliceblue">aliceblue</option>
+      </select>
+      <Background position={initialPosition} />
+      <Box color={shape.color} position={shape.position} onMove={handleMove}>
+        Drag me!
+      </Box>
     </>
   );
 }
