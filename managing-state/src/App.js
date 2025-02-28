@@ -1,29 +1,44 @@
 import { useState } from "react";
-
-export default function Picture() {
-  const [isActiveImg, setIsActiveImg] = useState(false);
-
-  let defaultClass = {
-    div: "background",
-    img: "picture",
-  };
-  if (isActiveImg) {
-    defaultClass.img += " picture--active";
-  } else {
-    defaultClass.div += " background--active";
-  }
+export default function EditProfile() {
+  const [isEditing, setIsStatus] = useState(true);
+  const [firstName, setFirstName] = useState("Jane");
+  const [lastName, setLastName] = useState("Jacobs");
 
   return (
-    <div className={defaultClass.div} onClick={() => setIsActiveImg(false)}>
-      <img
-        className={defaultClass.img}
-        alt="Rainbow houses in Kampung Pelangi, Indonesia"
-        src="https://i.imgur.com/5qwVYb1.jpeg"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsActiveImg(true);
-        }}
-      />
-    </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        setIsStatus(!isEditing);
+      }}
+    >
+      <label>
+        First name:{" "}
+        {isEditing ? (
+          <input
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+        ) : (
+          <b>{firstName}</b>
+        )}
+      </label>
+      <label>
+        Last name:{" "}
+        {isEditing ? (
+          <input
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+        ) : (
+          <b>{lastName}</b>
+        )}
+      </label>
+      <button type="submit"> {isEditing ? "Save" : "Edit"} Profile</button>
+      <p>
+        <i>
+          Hello, {firstName} {lastName} !
+        </i>
+      </p>
+    </form>
   );
 }
