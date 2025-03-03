@@ -1,44 +1,51 @@
 import { useState } from "react";
-export default function EditProfile() {
-  const [isEditing, setIsStatus] = useState(true);
-  const [firstName, setFirstName] = useState("Jane");
-  const [lastName, setLastName] = useState("Jacobs");
+import AddItem from "./AddItem.js";
+import PackingList from "./PackingList.js";
+
+let nextId = 3;
+const initialItems = [
+  { id: 0, title: "Warm socks", packed: true },
+  { id: 1, title: "Travel journal", packed: false },
+  { id: 2, title: "Watercolors", packed: false },
+];
+
+export default function TravelPlan() {
+  const [items, setItems] = useState(initialItems);
+
+  const total = items.length;
+  const packed = items.filter((item) => item.packed).length;
+
+  function handleAddItem(title) {
+    setItems([
+      ...items,
+      {
+        id: nextId++,
+        title,
+        packed: false,
+      },
+    ]);
+  }
+
+  function handleChangeItem(nextItem) {
+    setItems(items.map((item) => (item.id === nextItem.id ? nextItem : item)));
+  }
+
+  function handleDeleteItem(itemId) {
+    setItems(items.filter((item) => item.id !== itemId));
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setIsStatus(!isEditing);
-      }}
-    >
-      <label>
-        First name:{" "}
-        {isEditing ? (
-          <input
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-          />
-        ) : (
-          <b>{firstName}</b>
-        )}
-      </label>
-      <label>
-        Last name:{" "}
-        {isEditing ? (
-          <input
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-          />
-        ) : (
-          <b>{lastName}</b>
-        )}
-      </label>
-      <button type="submit"> {isEditing ? "Save" : "Edit"} Profile</button>
-      <p>
-        <i>
-          Hello, {firstName} {lastName} !
-        </i>
-      </p>
-    </form>
+    <>
+      <AddItem onAddItem={handleAddItem} />
+      <PackingList
+        items={items}
+        onChangeItem={handleChangeItem}
+        onDeleteItem={handleDeleteItem}
+      />
+      <hr />
+      <b>
+        {packed} out of {total} packed!
+      </b>
+    </>
   );
 }
