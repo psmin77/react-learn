@@ -1,22 +1,47 @@
 import { useState } from "react";
 
-function Form() {
-  const [text, setText] = useState("");
-  return <textarea value={text} onChange={(e) => setText(e.target.value)} />;
+export default function App() {
+  const [reverse, setReverse] = useState(false);
+  let checkbox = (
+    <label>
+      <input
+        type="checkbox"
+        checked={reverse}
+        onChange={(e) => setReverse(e.target.checked)}
+      />
+      Reverse order
+    </label>
+  );
+  if (reverse) {
+    return (
+      <>
+        <Field key="Last Name" label="Last name" />
+        <Field key="First Name" label="First name" />
+        {checkbox}
+      </>
+    );
+  } else {
+    return (
+      <>
+        <Field key="First Name" label="First name" />
+        <Field key="Last Name" label="Last name" />
+        {checkbox}
+      </>
+    );
+  }
 }
 
-export default function App() {
-  const [showHint, setShowHint] = useState(false);
-
+function Field({ label }) {
+  const [text, setText] = useState("");
   return (
-    <div>
-      {showHint && (
-        <p>
-          <i>Hint: Your favorite city?</i>
-        </p>
-      )}
-      <Form />
-      <button onClick={() => setShowHint(!showHint)}>Hide hint</button>
-    </div>
+    <label>
+      {label}:{" "}
+      <input
+        type="text"
+        value={text}
+        placeholder={label}
+        onChange={(e) => setText(e.target.value)}
+      />
+    </label>
   );
 }
