@@ -1,57 +1,39 @@
 import { useState } from "react";
+import Contact from "./Contact.js";
 
-export default function Gallery() {
-  const [index, setIndex] = useState(0);
-  const hasNext = index < images.length - 1;
+export default function ContactList() {
+  const [reverse, setReverse] = useState(false);
 
-  function handleClick() {
-    if (hasNext) {
-      setIndex(index + 1);
-    } else {
-      setIndex(0);
-    }
+  const displayedContacts = [...contacts];
+  if (reverse) {
+    displayedContacts.reverse();
   }
 
-  let image = images[index];
   return (
     <>
-      <button onClick={handleClick}>Next</button>
-      <h3>
-        Image {index + 1} of {images.length}
-      </h3>
-      <img key={img.src} src={image.src} />
-      <p>{image.place}</p>
+      <label>
+        <input
+          type="checkbox"
+          value={reverse}
+          onChange={(e) => {
+            setReverse(e.target.checked);
+          }}
+        />{" "}
+        Show in reverse order
+      </label>
+      <ul>
+        {displayedContacts.map((contact, i) => (
+          <li key={contact.id}>
+            <Contact contact={contact} />
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
 
-let images = [
-  {
-    place: "Penang, Malaysia",
-    src: "https://i.imgur.com/FJeJR8M.jpg",
-  },
-  {
-    place: "Lisbon, Portugal",
-    src: "https://i.imgur.com/dB2LRbj.jpg",
-  },
-  {
-    place: "Bilbao, Spain",
-    src: "https://i.imgur.com/z08o2TS.jpg",
-  },
-  {
-    place: "Valparaíso, Chile",
-    src: "https://i.imgur.com/Y3utgTi.jpg",
-  },
-  {
-    place: "Schwyz, Switzerland",
-    src: "https://i.imgur.com/JBbMpWY.jpg",
-  },
-  {
-    place: "Prague, Czechia",
-    src: "https://i.imgur.com/QwUKKmF.jpg",
-  },
-  {
-    place: "Ljubljana, Slovenia",
-    src: "https://i.imgur.com/3aIiwfm.jpg",
-  },
+const contacts = [
+  { id: 0, name: "Alice", email: "alice@mail.com" },
+  { id: 1, name: "Bob", email: "bob@mail.com" },
+  { id: 2, name: "Taylor", email: "taylor@mail.com" },
 ];
