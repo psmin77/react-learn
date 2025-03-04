@@ -7,8 +7,6 @@ export default function Chat({ contact, message, dispatch }) {
         value={message}
         placeholder={"Chat to " + contact.name}
         onChange={(e) => {
-          // TODO: dispatch edited_message
-          // (Read the input value from e.target.value)
           dispatch({
             type: "edited_message",
             message: e.target.value,
@@ -16,7 +14,16 @@ export default function Chat({ contact, message, dispatch }) {
         }}
       />
       <br />
-      <button>Send to {contact.email}</button>
+      <button
+        onClick={() => {
+          alert(`${message} to ${contact.email}`);
+          dispatch({
+            type: "send_message",
+          });
+        }}
+      >
+        Send to {contact.email}
+      </button>
     </section>
   );
 }
