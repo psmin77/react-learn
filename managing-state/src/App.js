@@ -1,47 +1,42 @@
 import { useState } from "react";
+import ContactList from "./ContactList.js";
+import EditContact from "./EditContact.js";
 
-export default function App() {
-  const [reverse, setReverse] = useState(false);
-  let checkbox = (
-    <label>
-      <input
-        type="checkbox"
-        checked={reverse}
-        onChange={(e) => setReverse(e.target.checked)}
-      />
-      Reverse order
-    </label>
-  );
-  if (reverse) {
-    return (
-      <>
-        <Field key="Last Name" label="Last name" />
-        <Field key="First Name" label="First name" />
-        {checkbox}
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Field key="First Name" label="First name" />
-        <Field key="Last Name" label="Last name" />
-        {checkbox}
-      </>
-    );
+export default function ContactManager() {
+  const [contacts, setContacts] = useState(initialContacts);
+  const [selectedId, setSelectedId] = useState(0);
+  const selectedContact = contacts.find((c) => c.id === selectedId);
+
+  function handleSave(updatedData) {
+    const nextContacts = contacts.map((c) => {
+      if (c.id === updatedData.id) {
+        return updatedData;
+      } else {
+        return c;
+      }
+    });
+    setContacts(nextContacts);
   }
-}
 
-function Field({ label }) {
-  const [text, setText] = useState("");
   return (
-    <label>
-      {label}:{" "}
-      <input
-        type="text"
-        value={text}
-        placeholder={label}
-        onChange={(e) => setText(e.target.value)}
+    <div>
+      <ContactList
+        contacts={contacts}
+        selectedId={selectedId}
+        onSelect={(id) => setSelectedId(id)}
       />
-    </label>
+      <hr />
+      <EditContact
+        key={selectedId}
+        initialData={selectedContact}
+        onSave={handleSave}
+      />
+    </div>
   );
 }
+
+const initialContacts = [
+  { id: 0, name: "Taylor", email: "taylor@mail.com" },
+  { id: 1, name: "Alice", email: "alice@mail.com" },
+  { id: 2, name: "Bob", email: "bob@mail.com" },
+];
