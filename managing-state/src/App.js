@@ -1,36 +1,22 @@
 import { useState } from "react";
-import { foods, filterItems } from "./data.js";
 
-function SearchBar({ query, handleChange }) {
-  return (
-    <label>
-      Search: <input value={query} onChange={handleChange} />
-    </label>
-  );
+function Form() {
+  const [text, setText] = useState("");
+  return <textarea value={text} onChange={(e) => setText(e.target.value)} />;
 }
 
-function List({ items }) {
-  return (
-    <table>
-      {items.map((food) => (
-        <tr key={food.id}>
-          <td>{food.name}</td>
-          <td>{food.description}</td>
-        </tr>
-      ))}
-    </table>
-  );
-}
-
-export default function FilterableList() {
-  const [query, setQuery] = useState("");
-  const filteredItems = filterItems(foods, query);
+export default function App() {
+  const [showHint, setShowHint] = useState(false);
 
   return (
-    <>
-      <SearchBar query={query} handleChange={(e) => setQuery(e.target.value)} />
-      <hr />
-      <List items={filteredItems} />
-    </>
+    <div>
+      {showHint && (
+        <p>
+          <i>Hint: Your favorite city?</i>
+        </p>
+      )}
+      <Form />
+      <button onClick={() => setShowHint(!showHint)}>Hide hint</button>
+    </div>
   );
 }
