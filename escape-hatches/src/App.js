@@ -1,24 +1,31 @@
-import { useState, useRef } from "react";
+import { useState, useRef } from 'react';
 
-export default function Chat() {
-  const [text, setText] = useState("");
-  const textRef = useRef(text);
+export default function VideoPlayer() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const playingRef = useRef(null);
 
-  function handleChange(e) {
-    setText(e.target.value);
-    textRef.current = e.target.value;
-  }
+  function handleClick() {
+    const nextIsPlaying = !isPlaying;
+    setIsPlaying(nextIsPlaying);
 
-  function handleSend() {
-    setTimeout(() => {
-      alert("Sending: " + textRef.current);
-    }, 3000);
+    if (nextIsPlaying) {
+      playingRef.current.play();
+    } else {
+      playingRef.current.pause();
+    }
   }
 
   return (
     <>
-      <input value={text} onChange={handleChange} />
-      <button onClick={handleSend}>Send</button>
+      <button onClick={handleClick}>
+        {isPlaying ? 'Pause' : 'Play'}
+      </button>
+      <video width="250" ref={playingRef}>
+        <source
+          src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"
+          type="video/mp4"
+        />
+      </video>
     </>
-  );
+  )
 }
