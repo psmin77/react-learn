@@ -1,31 +1,60 @@
-import { useReducer } from "react";
-import Chat from "./Chat.js";
-import ContactList from "./ContactList.js";
-import { initialState, messengerReducer } from "./messengerReducer";
+import { useState, useContext } from "react";
+import { places } from "./data.js";
+import { getImageUrl } from "./utils.js";
+import { ImgSizeContext } from "./Context.js";
 
-const contacts = [
-  { id: 0, name: "Taylor", email: "taylor@mail.com" },
-  { id: 1, name: "Alice", email: "alice@mail.com" },
-  { id: 2, name: "Bob", email: "bob@mail.com" },
-];
-
-export default function Messenger() {
-  const [state, dispatch] = useReducer(messengerReducer, initialState);
-  const message = state.messages[state.selectedId];
-  const contact = contacts.find((c) => c.id === state.selectedId);
+export default function App() {
+  const [isLarge, setIsLarge] = useState(false);
+  const imageSize = isLarge ? 150 : 100;
   return (
-    <div>
-      <ContactList
-        contacts={contacts}
-        selectedId={state.selectedId}
-        dispatch={dispatch}
-      />
-      <Chat
-        key={contact.id}
-        message={message}
-        contact={contact}
-        dispatch={dispatch}
-      />
-    </div>
+    <>
+      <ImgSizeContext.Provider value={imageSize}>
+        <label>
+          <input
+            type="checkbox"
+            checked={isLarge}
+            onChange={(e) => {
+              setIsLarge(e.target.checked);
+            }}
+          />
+          Use large images
+        </label>
+        <hr />
+        <List />
+      </ImgSizeContext.Provider>
+    </>
+  );
+}
+
+function List() {
+  const listItems = places.map((place) => (
+    <li key={place.id}>
+      <Place place={place} />
+    </li>
+  ));
+  return <ul>{listItems}</ul>;
+}
+
+function Place({ place }) {
+  return (
+    <>
+      <PlaceImage place={place} />
+      <p>
+        <b>{place.name}</b>
+        {": " + place.description}
+      </p>
+    </>
+  );
+}
+
+function PlaceImage({ place }) {
+  const imgSize = useContext(ImgSizeContext);
+  return (
+    <img
+      src={getImageUrl(place)}
+      alt={place.name}
+      width={imgSize}
+      height={imgSize}
+    />
   );
 }
