@@ -1,7 +1,33 @@
-import { useState } from "react";
+import { useRef } from "react";
 
-export default function Toggle() {
-  const [isOn, setIsOn] = useState(false);
+function DebouncedButton({ onClick, children }) {
+  const timeoutRef = useRef(null);
+  return (
+    <button
+      onClick={() => {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+          onClick();
+        }, 1000);
+      }}
+    >
+      {children}
+    </button>
+  );
+}
 
-  return <button onClick={() => setIsOn(!isOn)}>{isOn ? "On" : "Off"}</button>;
+export default function Dashboard() {
+  return (
+    <>
+      <DebouncedButton onClick={() => alert("Spaceship launched!")}>
+        Launch the spaceship
+      </DebouncedButton>
+      <DebouncedButton onClick={() => alert("Soup boiled!")}>
+        Boil the soup
+      </DebouncedButton>
+      <DebouncedButton onClick={() => alert("Lullaby sung!")}>
+        Sing a lullaby
+      </DebouncedButton>
+    </>
+  );
 }
