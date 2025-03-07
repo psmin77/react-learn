@@ -1,37 +1,48 @@
-import { useState, useEffect } from "react";
-import { fetchBio } from "./api.js";
+import { useState, useEffect, useMemo } from "react";
+import { initialTodos, createTodo } from "./todos.js";
 
-export default function Page() {
-  const [person, setPerson] = useState("Alice");
-  const [bio, setBio] = useState(null);
+export default function TodoList() {
+  const [todos, setTodos] = useState(initialTodos);
+  const [showActive, setShowActive] = useState(false);
 
-  useEffect(() => {
-    let ignore = false;
-    setBio(null);
-    fetchBio(person).then((result) => {
-      if (!ignore) {
-        setBio(result);
-      }
-    });
-    return () => (ignore = true);
-  }, [person]);
+  const activeTodos = todos.filter((todo) => !todo.completed);
+  const visibleTodos = showActive ? activeTodos : todos;
 
   return (
     <>
-      <select
-        value={person}
-        onChange={(e) => {
-          setPerson(e.target.value);
-        }}
-      >
-        <option value="Alice">Alice</option>
-        <option value="Bob">Bob</option>
-        <option value="Taylor">Taylor</option>
-      </select>
-      <hr />
-      <p>
-        <i>{bio ?? "Loading..."}</i>
-      </p>
+      <label>
+        <input
+          type="checkbox"
+          checked={showActive}
+          onChange={(e) => setShowActive(e.target.checked)}
+        />
+        Show only active todos
+      </label>
+      <NewTodo onAdd={(newTodo) => setTodos([...todos, newTodo])} />
+      <ul>
+        {visibleTodos.map((todo) => (
+          <li key={todo.id}>
+            {todo.completed ? <s>{todo.text}</s> : todo.text}
+          </li>
+        ))}
+      </ul>
+      {activeTodos.length} todos left
+    </>
+  );
+}
+
+function NewTodo({ onAdd }) {
+  const [text, setText] = useState("");
+
+  function handleAddClick() {
+    setText("");
+    onAdd(createTodo(text));
+  }
+
+  return (
+    <>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={handleAddClick}>Add</button>
     </>
   );
 }
