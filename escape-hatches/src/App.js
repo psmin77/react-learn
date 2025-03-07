@@ -1,43 +1,36 @@
 import { useState, useEffect } from 'react';
 
-export default function App() {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [canMove, setCanMove] = useState(true);
-
-  function handleMove(e) {
-    if (canMove) {
-      setPosition({ x: e.clientX, y: e.clientY });
-    }
-  }
+export default function Timer() {
+  const [count, setCount] = useState(0);
+  const [increment, setIncrement] = useState(1);
 
   useEffect(() => {
-    window.addEventListener('pointermove', handleMove);
-    return () => window.removeEventListener('pointermove', handleMove);
+    const id = setInterval(() => {
+      setCount(c => c + increment);
+    }, 1000);
+    return () => {
+      clearInterval(id);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
+  }, [increment]);
 
   return (
     <>
-      <label>
-        <input type="checkbox"
-          checked={canMove}
-          onChange={e => setCanMove(e.target.checked)}
-        />
-        The dot is allowed to move
-      </label>
+      <h1>
+        카운터: {count}
+        <button onClick={() => setCount(0)}>재설정</button>
+      </h1>
       <hr />
-      <div style={{
-        position: 'absolute',
-        backgroundColor: 'pink',
-        borderRadius: '50%',
-        opacity: 0.6,
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        pointerEvents: 'none',
-        left: -20,
-        top: -20,
-        width: 40,
-        height: 40,
-      }} />
+      <p>
+        초당 증가량:
+        <button disabled={increment === 0} onClick={() => {
+          setIncrement(i => i - 1);
+        }}>–</button>
+        <b>{increment}</b>
+        <button onClick={() => {
+          setIncrement(i => i + 1);
+        }}>+</button>
+      </p>
     </>
   );
 }
