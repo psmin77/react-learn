@@ -1,45 +1,45 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import { createConnection } from './chat.js';
 
-export default function Form() {
-  const [showForm, setShowForm] = useState(true);
-  const [message, setMessage] = useState("");
+const serverUrl = 'https://localhost:1234';
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    sendMessage(message);
-    setShowForm(false);
-  }
+function ChatRoom({ roomId }) {
+  const [message, setMessage] = useState('');
 
-  if (!showForm) {
-    return (
-      <>
-        <h1>Thanks for using our services!</h1>
-        <button
-          onClick={() => {
-            setMessage("");
-            setShowForm(true);
-          }}
-        >
-          Open chat
-        </button>
-      </>
-    );
-  }
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId);
+    connection.connect();
+    return () => connection.disconnect();
+  }, [roomId]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        placeholder="Message"
+    <>
+      <h1>Welcome to the {roomId} room!</h1>
+      <input
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={e => setMessage(e.target.value)}
       />
-      <button type="submit" disabled={message === ""}>
-        Send
-      </button>
-    </form>
+    </>
   );
 }
 
-function sendMessage(message) {
-  console.log("Sending message: " + message);
+export default function App() {
+  const [roomId, setRoomId] = useState('general');
+  return (
+    <>
+      <label>
+        Choose the chat room:{' '}
+        <select
+          value={roomId}
+          onChange={e => setRoomId(e.target.value)}
+        >
+          <option value="general">general</option>
+          <option value="travel">travel</option>
+          <option value="music">music</option>
+        </select>
+      </label>
+      <hr />
+      <ChatRoom roomId={roomId} />
+    </>
+  );
 }
