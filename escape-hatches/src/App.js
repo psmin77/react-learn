@@ -1,17 +1,37 @@
-import { useRef } from 'react';
-import SearchButton from './SearchButton.js';
-import SearchInput from './SearchInput.js';
+import { useState, useEffect } from "react";
+import { fetchBio } from "./api.js";
 
 export default function Page() {
-  const inputRef = useRef(null);
+  const [person, setPerson] = useState("Alice");
+  const [bio, setBio] = useState(null);
+
+  useEffect(() => {
+    let ignore = false;
+    setBio(null);
+    fetchBio(person).then((result) => {
+      if (!ignore) {
+        setBio(result);
+      }
+    });
+    return () => (ignore = true);
+  }, [person]);
+
   return (
     <>
-      <nav>
-      <SearchButton onClick={() => {
-          inputRef.current.focus();
-        }} />
-      </nav>
-      <SearchInput ref={inputRef} />
+      <select
+        value={person}
+        onChange={(e) => {
+          setPerson(e.target.value);
+        }}
+      >
+        <option value="Alice">Alice</option>
+        <option value="Bob">Bob</option>
+        <option value="Taylor">Taylor</option>
+      </select>
+      <hr />
+      <p>
+        <i>{bio ?? "Loading..."}</i>
+      </p>
     </>
   );
 }
