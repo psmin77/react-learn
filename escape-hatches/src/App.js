@@ -4,15 +4,17 @@ export default function App() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [canMove, setCanMove] = useState(true);
 
-  useEffect(() => {
-    function handleMove(e) {
-      if (canMove) {
+  function handleMove(e) {
+    if (canMove) {
       setPosition({ x: e.clientX, y: e.clientY });
-      }
     }
+  }
+
+  useEffect(() => {
     window.addEventListener('pointermove', handleMove);
     return () => window.removeEventListener('pointermove', handleMove);
-  }, [canMove]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
 
   return (
     <>
