@@ -4,17 +4,20 @@ import { experimental_useEffectEvent as useEffectEvent } from 'react';
 export default function Timer() {
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
+  const [delay, setDelay] = useState(100);
 
-  const onTick = useEffectEvent(() => setCount(c => c + increment))
+  const onTick = useEffectEvent(() => {
+    setCount(c => c + increment);
+  });
 
   useEffect(() => {
     const id = setInterval(() => {
       onTick();
-    }, 1000);
+    }, delay);
     return () => {
       clearInterval(id);
-    };
-  }, []);
+    }
+  }, [delay]);
 
   return (
     <>
@@ -24,7 +27,7 @@ export default function Timer() {
       </h1>
       <hr />
       <p>
-        초당 증가량:
+        증가량:
         <button disabled={increment === 0} onClick={() => {
           setIncrement(i => i - 1);
         }}>–</button>
@@ -32,6 +35,16 @@ export default function Timer() {
         <button onClick={() => {
           setIncrement(i => i + 1);
         }}>+</button>
+      </p>
+      <p>
+        증가 지연 시간:
+        <button disabled={delay === 100} onClick={() => {
+          setDelay(d => d - 100);
+        }}>–100 ms</button>
+        <b>{delay} ms</b>
+        <button onClick={() => {
+          setDelay(d => d + 100);
+        }}>+100 ms</button>
       </p>
     </>
   );
