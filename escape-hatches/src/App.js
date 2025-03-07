@@ -1,40 +1,45 @@
-import { useState, useMemo } from "react";
-import { initialTodos, createTodo, getVisibleTodos } from "./todos.js";
+import { useState, useEffect } from "react";
 
-export default function TodoList() {
-  const [todos, setTodos] = useState(initialTodos);
-  const [showActive, setShowActive] = useState(false);
-  const [text, setText] = useState("");
+export default function Form() {
+  const [showForm, setShowForm] = useState(true);
+  const [message, setMessage] = useState("");
 
-  const visibleTodos = useMemo(
-    () => getVisibleTodos(todos, showActive),
-    [todos, showActive]
-  );
+  function handleSubmit(e) {
+    e.preventDefault();
+    sendMessage(message);
+    setShowForm(false);
+  }
 
-  function handleAddClick() {
-    setText("");
-    setTodos([...todos, createTodo(text)]);
+  if (!showForm) {
+    return (
+      <>
+        <h1>Thanks for using our services!</h1>
+        <button
+          onClick={() => {
+            setMessage("");
+            setShowForm(true);
+          }}
+        >
+          Open chat
+        </button>
+      </>
+    );
   }
 
   return (
-    <>
-      <label>
-        <input
-          type="checkbox"
-          checked={showActive}
-          onChange={(e) => setShowActive(e.target.checked)}
-        />
-        Show only active todos
-      </label>
-      <input value={text} onChange={(e) => setText(e.target.value)} />
-      <button onClick={handleAddClick}>Add</button>
-      <ul>
-        {visibleTodos.map((todo) => (
-          <li key={todo.id}>
-            {todo.completed ? <s>{todo.text}</s> : todo.text}
-          </li>
-        ))}
-      </ul>
-    </>
+    <form onSubmit={handleSubmit}>
+      <textarea
+        placeholder="Message"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+      />
+      <button type="submit" disabled={message === ""}>
+        Send
+      </button>
+    </form>
   );
+}
+
+function sendMessage(message) {
+  console.log("Sending message: " + message);
 }
