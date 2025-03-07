@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
+import { experimental_useEffectEvent as useEffectEvent } from 'react';
 
 export default function Timer() {
   const [count, setCount] = useState(0);
   const [increment, setIncrement] = useState(1);
 
+  const onTick = useEffectEvent(() => setCount(c => c + increment))
+
   useEffect(() => {
     const id = setInterval(() => {
-      setCount(c => c + increment);
+      onTick();
     }, 1000);
     return () => {
       clearInterval(id);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [increment]);
+  }, []);
 
   return (
     <>
