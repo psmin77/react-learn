@@ -1,13 +1,31 @@
-import { useEffect } from 'react';
-import { createConnection } from './chat.js';
+import { useState, useEffect } from 'react';
+import { experimental_useEffectEvent as useEffectEvent } from 'react';
+import {
+  createEncryptedConnection,
+  createUnencryptedConnection,
+} from './chat.js';
 
-export default function ChatRoom({ options }) {
-  const { serverUrl, roomId } = options;
+export default function ChatRoom({ roomId, isEncrypted, onMessage }) {
+  const onReceiveMessage = useEffectEvent(onMessage);
+
   useEffect(() => {
-    const connection = createConnection({ serverUrl, roomId });
+    function createConnection() {
+      const options = {
+        serverUrl: 'https://localhost:1234',
+        roomId
+      };
+      if (isEncrypted) {
+        return createEncryptedConnection(options);
+      } else {
+        return createUnencryptedConnection(options);
+      }
+    }
+
+    const connection = createConnection();
+    connection.on('message', (msg) => onReceiveMessage(msg));
     connection.connect();
     return () => connection.disconnect();
-  }, [serverUrl, roomId]);
+  }, [roomId, isEncrypted]);
 
-  return <h1>Welcome to the {options.roomId} room!</h1>;
+  return <h1>Welcome to the {roomId} room!</h1>;
 }
